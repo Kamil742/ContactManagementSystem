@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -29,13 +30,9 @@ public class UserController {
      * @throws RuntimeException
      */
     @PostMapping("/createUser")
-    public ResponseEntity<?> createNewUser(@RequestBody UserContact user) throws RuntimeException{
-        try{
+    public ResponseEntity<?> createNewUser(@RequestBody UserContact user){
             UserContact userDetails = userService.createUser(user);
-            return new ResponseEntity<UserContact>(userDetails, HttpStatus.OK);
-        } catch (UserAlreadyExistsException e) {
-            throw new RuntimeException(e);
-        }
+            return new ResponseEntity<>(userDetails, HttpStatus.CREATED);
     }
 
     /**
@@ -49,7 +46,7 @@ public class UserController {
             UserContact user = userService.getUserById(userId);
             return new ResponseEntity<>(user, HttpStatus.OK);
         } catch (UserDoesNotExistsException e) {
-            throw new RuntimeException(e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -59,8 +56,13 @@ public class UserController {
      */
     @GetMapping("/getAllUsers")
     public ResponseEntity<?> getAllUsers(){
-        List<UserContact> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        try {
+            List<UserContact> users = userService.getAllUsers();
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        }catch (UserDoesNotExistsException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NO_CONTENT);
+        }
+
     }
 
     /**
@@ -75,7 +77,7 @@ public class UserController {
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 
         } catch (UserDoesNotExistsException e) {
-            throw new RuntimeException(e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -90,7 +92,8 @@ public class UserController {
            userService.deleteUser(userId);
            return new ResponseEntity<>("UserContact deleted successfully", HttpStatus.OK);
         } catch (UserDoesNotExistsException e) {
-            throw new RuntimeException(e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
 }

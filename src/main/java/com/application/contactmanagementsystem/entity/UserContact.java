@@ -1,6 +1,5 @@
 package com.application.contactmanagementsystem.entity;
 
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,9 +18,8 @@ public class UserContact {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userId;
 
-    private String FullName;
+    private String fullName;
 
-    @NotNull
     private String contactNo;
 
     private String emailId;
@@ -29,3 +27,4 @@ public class UserContact {
     @OneToOne
     private Address address;
 }
+

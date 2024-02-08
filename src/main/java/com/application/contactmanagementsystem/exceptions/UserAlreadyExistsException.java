@@ -1,7 +1,8 @@
 package com.application.contactmanagementsystem.exceptions;
 
 
-public class UserAlreadyExistsException extends Throwable {
-    public UserAlreadyExistsException(String s) {
+public class UserAlreadyExistsException extends RuntimeException {
+    public UserAlreadyExistsException(String message) {
+        super(message);
     }
 }

@@ -9,7 +9,6 @@ import com.application.contactmanagementsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.AbstractList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,97 +27,107 @@ public class UserServiceImpl implements UserService {
 
     /**
      * service method to create new user with unique contact number
+     *
      * @param user
      * @return
      * @throws UserAlreadyExistsException
      */
     @Override
-    public UserContact createUser(UserContact user) throws UserAlreadyExistsException {
-        try{
-            if(!userRepository.existsByContactNo(user.getContactNo())){
+    public UserContact createUser(UserContact user) {
+        try {
+            if (!userRepository.existsByContactNo(user.getContactNo())) {
                 addressRepository.save(user.getAddress());
-               return userRepository.save(user);
+                return userRepository.save(user);
             }
-            else {
-                throw new UserAlreadyExistsException("The user with contact number already exists");
-            }
-        }catch (UserAlreadyExistsException e){
             throw new UserAlreadyExistsException("The user with contact number already exists");
+        } catch (UserAlreadyExistsException e) {
+            throw new RuntimeException(e);
         }
     }
 
     /**
      * Service method to get user by id
+     *
      * @param userId
-     * @return
      * @throws UserDoesNotExistsException
+     * @returnŌ
      */
     @Override
-    public UserContact getUserById(Long userId) throws UserDoesNotExistsException {
-        try{
+    public UserContact getUserById(Long userId) {
+        try {
             Optional<UserContact> optionalUser = userRepository.findById(userId);
-            if(optionalUser.isPresent()){
+            if (optionalUser.isPresent()) {
                 return optionalUser.get();
-            }
-            else {
+            } else {
                 throw new UserDoesNotExistsException("The user with given id does not exists");
             }
-        }catch (UserDoesNotExistsException e){
-            throw new UserDoesNotExistsException("The user with given id does not exists");
+        } catch (UserDoesNotExistsException e) {
+            throw new RuntimeException(e);
         }
     }
 
     /**
      * method to get all users
+     *
      * @return
      */
     @Override
     public List<UserContact> getAllUsers() {
-        return userRepository.findAll();
+        try {
+            if (userRepository.findAll().isEmpty()) {
+                throw new UserDoesNotExistsException("No user exists");
+            } else {
+                return userRepository.findAll();
+            }
+        } catch (UserDoesNotExistsException e) {
+            throw new RuntimeException("No user is exists", e);
+        }
     }
 
     /**
      * method to update the user
+     *
      * @param user
      * @return
      * @throws UserDoesNotExistsException
      */
     @Override
-    public UserContact updateUser(UserContact user) throws UserDoesNotExistsException {
-        try{
+    public UserContact updateUser(UserContact user) {
+        try {
             Optional<UserContact> optionalUser = userRepository.findById(user.getUserId());
-            if(optionalUser.isPresent()){
+            if (optionalUser.isPresent()) {
                 user.setUserId(optionalUser.get().getUserId());
                 return userRepository.save(user);
-            }
-            else{
+            } else {
                 throw new UserDoesNotExistsException("The user with given id does not exists");
             }
-        }catch (UserDoesNotExistsException e){
-            throw new UserDoesNotExistsException("The user with given id does not exists");
+        } catch (UserDoesNotExistsException e) {
+            throw new RuntimeException(e);
         }
     }
 
     /**
      * method to delete the user
+     *
      * @param userId
      * @throws UserDoesNotExistsException
      */
     @Override
-    public void deleteUser(Long userId) throws UserDoesNotExistsException {
-        try{
+    public void deleteUser(Long userId) {
+        try {
             Optional<UserContact> optionalUser = userRepository.findById(userId);
-            if(optionalUser.isPresent()){
+            if (optionalUser.isPresent()) {
                 UserContact user = optionalUser.get();
                 userRepository.delete(user);
                 addressRepository.delete(user.getAddress());
-            }
-            else{
+            } else {
                 throw new UserDoesNotExistsException("The user with given id does not exists");
             }
-        }catch (UserDoesNotExistsException e){
-            throw new UserDoesNotExistsException("The user with given id does not exists");
+        } catch (UserDoesNotExistsException e) {
+            throw new RuntimeException(e);
         }
 
     }
+
+
 }

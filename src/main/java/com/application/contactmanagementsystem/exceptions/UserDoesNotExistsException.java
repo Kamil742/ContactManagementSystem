@@ -1,6 +1,7 @@
 package com.application.contactmanagementsystem.exceptions;
 
-public class UserDoesNotExistsException extends Throwable {
-    public UserDoesNotExistsException(String s) {
+public class UserDoesNotExistsException extends RuntimeException {
+    public UserDoesNotExistsException(String message) {
+        super(message);
     }
 }

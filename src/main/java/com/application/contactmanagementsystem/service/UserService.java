@@ -10,10 +10,10 @@ import java.util.List;
 @Service
 public interface UserService {
 
-    UserContact createUser(UserContact user) throws UserAlreadyExistsException;
-    UserContact getUserById(Long userId) throws UserDoesNotExistsException;
+    UserContact createUser(UserContact user);
+    UserContact getUserById(Long userId);
     List<UserContact> getAllUsers();
-    UserContact updateUser(UserContact user) throws UserDoesNotExistsException;
-    void deleteUser(Long userId) throws UserDoesNotExistsException;
+    UserContact updateUser(UserContact user);
+    void deleteUser(Long userId);
 
 }
